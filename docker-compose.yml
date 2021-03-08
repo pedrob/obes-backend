@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: api
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - JDBC_DATABASE_URL=${JDBC_DATABASE_URL}
+      - JDBC_DATABASE_USERNAME=${JDBC_DATABASE_USERNAME}
+      - JDBC_DATABASE_PASSWORD=${JDBC_DATABASE_PASSWORD}
+      - APP_SECRET=${APP_SECRET}
+
+  db:
+    image: 'postgres:13-alpine'
+    container_name: db
+    volumes:
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./.db_data/:/var/run/postgresql
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${JDBC_DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${JDBC_DATABASE_PASSWORD}
