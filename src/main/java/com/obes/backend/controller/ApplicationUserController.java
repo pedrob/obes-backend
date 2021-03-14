@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 import com.obes.backend.repository.ApplicationUserRepository;
+import com.obes.backend.exception.BadRequestException;
 import com.obes.backend.exception.UsernameAlreadyInUseException;
 import com.obes.backend.model.ApplicationUser;
 
@@ -34,6 +35,9 @@ public class ApplicationUserController {
     }
 
     private void validateUser(ApplicationUser user) {
+        if (user.getUsername().equals("") || user.getPassword().equals("")) {
+            throw new BadRequestException("Username or password invalid");
+        }
         Optional<ApplicationUser> foundedUser = userRepository.findByUsername(user.getUsername());
         if (foundedUser.isPresent()) {
             throw new UsernameAlreadyInUseException("Username already in use");

@@ -2,12 +2,14 @@ package com.obes.backend.model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+
+import javax.validation.constraints.Min;
 
 
 @Data
@@ -32,8 +34,21 @@ public class Book {
     @Column(length = 280)
     private String description;
     
+    @Min(0)
     private Float price;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "buyer_id")
+    private Purchase purchase;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "owner_id")
+    private ApplicationUser owner;
+
     private Date createdAt;
+
+    public Long getOwner() {
+        return this.owner.getId();
+    }
 
 }
