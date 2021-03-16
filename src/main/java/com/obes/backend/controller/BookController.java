@@ -49,6 +49,11 @@ public class BookController {
         return bookRepository.findAllByOwnerUsernameOrderByCreatedAtDesc(pageable, ownerUsername);
     }
 
+    @GetMapping("/books/buyer/{buyerUsername}")
+    public Page<Book> getBooksByBuyer(Pageable pageable, @PathVariable String buyerUsername) {
+        return bookRepository.findAllByBuyerUsername(pageable, buyerUsername);
+    }
+
     @GetMapping("/books/{bookId}")
     public Book getBookById(@PathVariable Long bookId) {
         return bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book not found"));
@@ -86,7 +91,7 @@ public class BookController {
 
     @GetMapping("/books/search")
     public Page<Book> searchBooks(Pageable pageable, @RequestParam("term") String term) {
-        return bookRepository.findByTitleContaining(pageable, term);
+        return bookRepository.findByTitleContainingIgnoreCase(pageable, term);
     }
 
 }

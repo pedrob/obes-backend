@@ -38,7 +38,7 @@ public class Book {
     private Float price;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "buyer_id")
+    @JoinColumn(name = "purchase_id")
     private Purchase purchase;
 
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -49,6 +49,14 @@ public class Book {
 
     public Long getOwner() {
         return this.owner.getId();
+    }
+
+    public Long getPurchase() {
+        if(this.purchase == null) {
+            return null;
+        } else {
+            return this.purchase.getId(); 
+        }
     }
 
 }

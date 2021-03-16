@@ -32,6 +32,9 @@ public class PuchaseService {
     throws SameBuyerAndOwnerException, SameBookException {
         this.validatePurchase(purchase);
         purchase.setCreatedAt(new Date());
+        for (Book book : purchase.getBooks()) {
+            book.setPurchase(purchase);
+        }
         return purchaseRepository.save(purchase);
     }
 

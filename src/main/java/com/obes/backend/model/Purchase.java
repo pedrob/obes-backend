@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.*;
 
@@ -19,7 +20,7 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "purchase")
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     private List<Book> books;
 
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -31,4 +32,5 @@ public class Purchase {
     public Long getBuyer() {
         return this.buyer.getId();
     }
+
 }
