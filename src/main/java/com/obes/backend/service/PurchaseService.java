@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor(onConstructor=@__({@Autowired}))
-public class PuchaseService {
+public class PurchaseService {
 
     private PurchaseRepository purchaseRepository;
     

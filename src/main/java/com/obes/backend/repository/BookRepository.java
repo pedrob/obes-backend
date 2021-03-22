@@ -10,7 +10,7 @@ import com.obes.backend.model.Book;
 
 public interface BookRepository extends JpaRepository<Book, Long>{
 
-    @Query("SELECT b FROM Book b WHERE b.purchase = null")
+    @Query("SELECT b FROM Book b WHERE b.purchase = null ORDER BY b.createdAt DESC")
     Page<Book> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Page<Book> findAllByOwnerUsernameOrderByCreatedAtDesc(Pageable pageable, String username);

@@ -44,13 +44,15 @@ public class BookController {
         return bookRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
-    @GetMapping("/books/owner/{ownerUsername}")
-    public Page<Book> getBooksByOwner(Pageable pageable, @PathVariable String ownerUsername) {
+    @GetMapping("/books/owner")
+    public Page<Book> getBooksByOwner(@RequestHeader("Authorization") String token, Pageable pageable) {
+        String ownerUsername = tokenService.getUsernameFromToken(token);
         return bookRepository.findAllByOwnerUsernameOrderByCreatedAtDesc(pageable, ownerUsername);
     }
 
-    @GetMapping("/books/buyer/{buyerUsername}")
-    public Page<Book> getBooksByBuyer(Pageable pageable, @PathVariable String buyerUsername) {
+    @GetMapping("/books/buyer")
+    public Page<Book> getBooksByBuyer(@RequestHeader("Authorization") String token, Pageable pageable) {
+        String buyerUsername = tokenService.getUsernameFromToken(token);
         return bookRepository.findAllByBuyerUsername(pageable, buyerUsername);
     }
 

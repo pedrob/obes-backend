@@ -20,7 +20,7 @@ import com.obes.backend.model.Purchase;
 import com.obes.backend.model.Book;
 import com.obes.backend.exception.NotFoundException;
 import com.obes.backend.model.dto.PurchaseBodyRequest;
-import com.obes.backend.service.PuchaseService;
+import com.obes.backend.service.PurchaseService;
 import com.obes.backend.service.TokenService;
 import com.obes.backend.repository.ApplicationUserRepository;
 import com.obes.backend.repository.BookRepository;
@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor(onConstructor=@__({@Autowired}))
 public class PurchaseController {
     
-    private PuchaseService purchaseService;
+    private PurchaseService purchaseService;
     
     private TokenService tokenService;
 
