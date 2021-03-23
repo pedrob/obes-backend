@@ -14,6 +14,7 @@ public class ApplicationUserFactory {
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         return ApplicationUser.builder()
                 .id(idGenerator)
+                .name("User " + idGenerator)
                 .username(username)
                 .password(encodedPassword)
                 .build();

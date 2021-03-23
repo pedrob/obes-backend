@@ -175,6 +175,7 @@ public class ApplicationUserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(new HashMap<>()
             {{
+                put("name", "User 2");
                 put("username", "user2");
                 put("password", "password2");
             }})))

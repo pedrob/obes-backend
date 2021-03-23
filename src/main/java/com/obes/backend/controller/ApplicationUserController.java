@@ -1,39 +1,41 @@
 package com.obes.backend.controller;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.util.ReflectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import com.obes.backend.repository.ApplicationUserRepository;
+import com.obes.backend.service.UserDetailsServiceImpl;
 import com.obes.backend.exception.BadRequestException;
 import com.obes.backend.exception.NotFoundException;
 import com.obes.backend.exception.UsernameAlreadyInUseException;
-import com.obes.backend.model.Address;
 import com.obes.backend.model.ApplicationUser;
-import com.obes.backend.model.CreditCard;
 
 @RestController
 public class ApplicationUserController {
 
     private ApplicationUserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private UserDetailsServiceImpl userService;
 
+    @Autowired
     public ApplicationUserController(ApplicationUserRepository userRepository,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsServiceImpl userService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userService = userService;
     }
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@RequestBody @Valid ApplicationUser user) {
+    public void signUp(@Valid @RequestBody ApplicationUser user) {
         validateUser(user);
         user.setCreatedAt(new Date());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -48,9 +50,10 @@ public class ApplicationUserController {
     }
 
     @PatchMapping("users/{username}")
-    public ApplicationUser partialUpdateUser(@PathVariable String username, @RequestBody Map<String, Object> jsonBody) {
+    public ApplicationUser partialUpdateUser(@PathVariable String username, 
+    @Valid @RequestBody Map<String, Object> jsonBody) {
         return userRepository.findByUsername(username).map(user -> {
-            ApplicationUser userUpdated = partialUpdateValues(jsonBody, user);
+            ApplicationUser userUpdated = userService.partialUpdate(jsonBody, user);
             userRepository.save(userUpdated);
             return userUpdated;
         }).orElseThrow(() -> new NotFoundException("User not found"));
@@ -66,31 +69,6 @@ public class ApplicationUserController {
         }
     }
 
-    private ApplicationUser partialUpdateValues(Map<String, Object> jsonBody, ApplicationUser user) {
-        ApplicationUser userUpdated = (ApplicationUser) setValues(jsonBody, user);
-        return userUpdated;
-    }
-
-    private <T> Object setValues(Map<String, Object> jsonBody, Object object) {
-        jsonBody.forEach((key, value) -> {
-            if (key.equals("address")) {
-                ApplicationUser user = (ApplicationUser) object;
-                Address address = (Address) setValues((Map<String, Object>)value, user.getAddress());
-                user.setAddress(address);
-            }
-            else if (key.equals("creditCard")) {
-                ApplicationUser user = (ApplicationUser) object;
-                CreditCard creditCard = (CreditCard) setValues((Map<String, Object>)value, user.getCreditCard());
-                user.setCreditCard(creditCard);
-            } 
-            else {
-                Field field = ReflectionUtils.findRequiredField(object.getClass(), key); 
-                field.setAccessible(true); 
-                ReflectionUtils.setField(field, object, value);
-            }
-        });
-        return object;
-    }
 
     
 }
