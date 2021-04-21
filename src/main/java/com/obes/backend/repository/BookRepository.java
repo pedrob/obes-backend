@@ -19,4 +19,6 @@ public interface BookRepository extends JpaRepository<Book, Long>{
     Page<Book> findAllByBuyerUsername(Pageable pageable, @Param("username") String username);
 
     Page<Book> findByTitleContainingIgnoreCase(Pageable pageable, String term);
+
+    Page<Book> findByAuthorContainingIgnoreCase(Pageable pageable, String term);
 }

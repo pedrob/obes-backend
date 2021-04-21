@@ -96,4 +96,9 @@ public class BookController {
         return bookRepository.findByTitleContainingIgnoreCase(pageable, term);
     }
 
+    @GetMapping("/books/search_by_author")
+    public Page<Book> searchBooksByAuthor(Pageable pageable, @RequestParam("term") String term) {
+        return bookRepository.findByAuthorContainingIgnoreCase(pageable, term);
+    }
+
 }
