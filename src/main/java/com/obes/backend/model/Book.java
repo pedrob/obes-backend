@@ -31,6 +31,8 @@ public class Book {
     @NotBlank
     private String author;
 
+    private String imageUrl;
+
     @Column(length = 280)
     private String description;
     

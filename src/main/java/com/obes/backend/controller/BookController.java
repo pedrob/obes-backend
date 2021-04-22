@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 
@@ -26,6 +30,7 @@ import com.obes.backend.model.ApplicationUser;
 import com.obes.backend.model.Book;
 import com.obes.backend.repository.ApplicationUserRepository;
 import com.obes.backend.repository.BookRepository;
+import com.obes.backend.service.FileService;
 import com.obes.backend.service.TokenService;
 import com.obes.backend.exception.NotFoundException;
 
@@ -38,6 +43,8 @@ public class BookController {
     private TokenService tokenService;
 
     private ApplicationUserRepository userRepository;
+
+    private FileService fileService;
     
     @GetMapping("/books")
     public Page<Book> getBooks(Pageable pageable) {
@@ -101,4 +108,19 @@ public class BookController {
         return bookRepository.findByAuthorContainingIgnoreCase(pageable, term);
     }
 
+    @PostMapping("/books/image")
+    public void searchBooksByAuthor(@RequestParam("file") MultipartFile file, Long id) {
+        fileService.uploadFile(file, id);
+        Book book = bookRepository.getOne(id);
+        //TODO: change to domain
+        book.setImageUrl("http://localhost:8080/uploads/"+
+        id+"/"+StringUtils.cleanPath(file.getOriginalFilename()));
+        bookRepository.save(book);
+    }
+
+    @GetMapping("/uploads/{id}/{imageName}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id, @PathVariable String imageName) {
+        byte[] image = fileService.getFile("uploads/"+id+"/"+imageName);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+    }
 }
