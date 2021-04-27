@@ -23,7 +23,6 @@ public class FileService {
     try {
       Path copyLocation = Paths.get(uploadDir +
       File.separator + id + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
-      // System.out.println(copyLocation);
       Files.createDirectories(copyLocation);
       Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
     } catch (Exception e) {

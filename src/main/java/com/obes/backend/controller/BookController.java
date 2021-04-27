@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ public class BookController {
     private ApplicationUserRepository userRepository;
 
     private FileService fileService;
+
     
     @GetMapping("/books")
     public Page<Book> getBooks(Pageable pageable) {
@@ -109,11 +111,10 @@ public class BookController {
     }
 
     @PostMapping("/books/image")
-    public void searchBooksByAuthor(@RequestParam("file") MultipartFile file, Long id) {
+    public void searchBooksByAuthor(@RequestParam("file") MultipartFile file, Long id, @Value("${app.url}") String appUrl) {
         fileService.uploadFile(file, id);
         Book book = bookRepository.getOne(id);
-        //TODO: change to domain
-        book.setImageUrl("http://localhost:8080/uploads/"+
+        book.setImageUrl(appUrl + "/uploads/"+
         id+"/"+StringUtils.cleanPath(file.getOriginalFilename()));
         bookRepository.save(book);
     }
